@@ -12,12 +12,23 @@ function move(){
 		id: id,
 		x: rand(16),
 		y: rand(16)
-	}, function(){
-		console.log("done");
 	})
 }
 
-var users = [];
+function UserManager(){
+	this.users = [];
+}
+UserManager.prototype.getUsers = function(){
+	this.users = this.users.filter(function(item){
+		return (new Date().getTime() - item.updated) < 1000; 
+	});
+	return this.users;
+}
+UserManager.prototype.update = function(user){
+	this.users.push(user);
+}
+
+var userManager = new UserManager();
 
 
 new Vue({
@@ -40,17 +51,9 @@ new Vue({
 				y: data.value.y,
 				updated: new Date().getTime()
 			};
-			users.push(user);
-			self.users = users;
+			userManager.update(user);
+			self.users = userManager.getUsers();
 		});
-		
-		setInterval(function(){
-			users = users.filter(function(item){
-				return (new Date().getTime() - item.updated) < 1000; 
-			});
-		}, 1000)
-		
-
 		
 	}
 })
