@@ -16,16 +16,27 @@ function move(){
 }
 
 function UserManager(){
-	this.users = [];
+	this.users = {};
 }
 UserManager.prototype.getUsers = function(){
-	this.users = this.users.filter(function(item){
-		return (new Date().getTime() - item.updated) < 1000; 
+	var self = this;
+	
+	Object.keys(this.users).forEach(function (key) {
+		var item = self.users[key];
+		if((new Date().getTime() - item.updated) > 2000){
+			delete self.users[key];
+		}
 	});
-	return this.users;
+	var usersAry = [];
+	
+	Object.keys(this.users).forEach(function (key) {
+		var item = self.users[key];
+		usersAry.push(item);
+	});
+	return usersAry;
 }
 UserManager.prototype.update = function(user){
-	this.users.push(user);
+	this.users[user.id] = user;
 }
 
 var userManager = new UserManager();
